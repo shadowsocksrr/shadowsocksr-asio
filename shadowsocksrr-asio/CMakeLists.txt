@@ -15,7 +15,10 @@ set (SSRR_ASIO_VERSION_PATCH 1)
 configure_file (
   "${PROJECT_SOURCE_DIR}/config.h.in"
   "${PROJECT_SOURCE_DIR}/config.h"
-  )
+)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/3thLib/libsodium/")
+find_package(sodium)
 
 # 包含子项目。
 add_subdirectory ("shadowsocksrr-asio")
