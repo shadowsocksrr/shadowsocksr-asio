@@ -29,10 +29,11 @@ ServerManager::ServerManager(std::shared_ptr<MainConfig> config, boost::asio::io
 void ServerManager::run()
 {
 	// TODO this is DEBUG mock init, remove this when config analysis can use
-	server_pool_.push_back(std::make_shared<SsrServer>(config_, io_service_));
-	
+	server_pool_.push_back(std::make_shared<SsrServer>(config_, std::make_shared<SsrConfig>(), io_service_));
+
 	// TODO loop on a config tree to create all server
-	// create and add server to server_pool_
+	// create and add server to server_pool_ 
+	// TODO like above (like the up mock)
 	;
 
 	// start all server

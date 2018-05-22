@@ -17,43 +17,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SSR_SERVER_H
-#define SSR_SERVER_H
-#include <boost/asio.hpp>
-#include <memory>
-#include "../base-server.h"
-#include "ssr-config.h"
+#ifndef UDP_PORT_MANAGER_H
+#define UDP_PORT_MANAGER_H
 
-// forward declaration to break include loop reference
-class SsrUdpBase;
 
-class SsrServer : public BaseServer
+// to register and assignation udp port
+// to avoid two different server stack revc on a same udp port
+class UdpPortManager
 {
-private:
-	std::shared_ptr<SsrConfig> ssr_config_;
-
-	boost::asio::ip::tcp::endpoint listen_endpoint_;
-	std::unique_ptr<boost::asio::ip::tcp::acceptor> tcp_acceptor_;
-
-	std::shared_ptr<SsrUdpBase> ssr_udp_relay_;
-
 public:
-	enum Mode
-	{
-		SERVER,
-		CLIENT,
-	};
-private:
-	Mode mode;
-public:
-	SsrServer(std::shared_ptr<MainConfig> config, std::shared_ptr<SsrConfig> ssr_config, boost::asio::io_service& io_service);
-	void run() override;
 
-private:
-	void async_accept();
+	// TODO implement port assignation, register, gc
+
+
+
 };
 
 
-
-
-#endif	// SSR_SERVER_H
+#endif	// UDP_PORT_MANAGER_H

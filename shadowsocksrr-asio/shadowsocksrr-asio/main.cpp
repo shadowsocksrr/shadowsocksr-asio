@@ -35,14 +35,16 @@ std::weak_ptr<Service> service_weak_ref;
 
 
 void handleTermination(int) {
-	if (!service_weak_ref.expired())
-		service_weak_ref.lock()->stop();
+	auto ptr = service_weak_ref.lock();
+	if (!ptr)
+		ptr->stop();
 }
 
 void restartService(int) {
 	restart = true;
-	if (!service_weak_ref.expired())
-		service_weak_ref.lock()->stop();
+	auto ptr = service_weak_ref.lock();
+	if (!ptr)
+		ptr->stop();
 }
 
 int main()

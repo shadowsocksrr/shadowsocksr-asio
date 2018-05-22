@@ -17,43 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SSR_SERVER_H
-#define SSR_SERVER_H
-#include <boost/asio.hpp>
+#ifndef SOCKS5_PROTOCOL_H
+#define SOCKS5_PROTOCOL_H
+
 #include <memory>
-#include "../base-server.h"
-#include "ssr-config.h"
 
-// forward declaration to break include loop reference
-class SsrUdpBase;
-
-class SsrServer : public BaseServer
+// a socks5 protocol implement
+class Socks5Protocol : public std::enable_shared_from_this<Socks5Protocol>
 {
-private:
-	std::shared_ptr<SsrConfig> ssr_config_;
-
-	boost::asio::ip::tcp::endpoint listen_endpoint_;
-	std::unique_ptr<boost::asio::ip::tcp::acceptor> tcp_acceptor_;
-
-	std::shared_ptr<SsrUdpBase> ssr_udp_relay_;
-
-public:
-	enum Mode
-	{
-		SERVER,
-		CLIENT,
-	};
-private:
-	Mode mode;
-public:
-	SsrServer(std::shared_ptr<MainConfig> config, std::shared_ptr<SsrConfig> ssr_config, boost::asio::io_service& io_service);
-	void run() override;
-
-private:
-	void async_accept();
 };
 
-
-
-
-#endif	// SSR_SERVER_H
+#endif	// SOCKS5_PROTOCOL_H

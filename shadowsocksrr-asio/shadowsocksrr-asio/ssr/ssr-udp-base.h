@@ -17,43 +17,31 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SSR_SERVER_H
-#define SSR_SERVER_H
-#include <boost/asio.hpp>
+#ifndef SSR_UDP_BASE_H
+#define SSR_UDP_BASE_H
+
 #include <memory>
-#include "../base-server.h"
-#include "ssr-config.h"
+#include "ssr-server.h"
 
-// forward declaration to break include loop reference
-class SsrUdpBase;
-
-class SsrServer : public BaseServer
+// udp server/client base interface
+class SsrUdpBase : public std::enable_shared_from_this<SsrUdpBase>
 {
-private:
-	std::shared_ptr<SsrConfig> ssr_config_;
+protected:
+	// handle weak a ref to parents server to take access for output debug info
+	std::weak_ptr<BaseServer> parents_server_ref_;
 
-	boost::asio::ip::tcp::endpoint listen_endpoint_;
-	std::unique_ptr<boost::asio::ip::tcp::acceptor> tcp_acceptor_;
-
-	std::shared_ptr<SsrUdpBase> ssr_udp_relay_;
+	template<typename T = SsrServer>
+	std::shared_ptr<T> get_parents_server_ref() const;
 
 public:
-	enum Mode
-	{
-		SERVER,
-		CLIENT,
-	};
-private:
-	Mode mode;
-public:
-	SsrServer(std::shared_ptr<MainConfig> config, std::shared_ptr<SsrConfig> ssr_config, boost::asio::io_service& io_service);
-	void run() override;
-
-private:
-	void async_accept();
+	virtual ~SsrUdpBase() = default;
+	virtual void start() = 0;
 };
 
+template <typename T>
+std::shared_ptr<T> SsrUdpBase::get_parents_server_ref() const
+{
+	return std::dynamic_pointer_cast<T>(parents_server_ref_.lock());
+}
 
-
-
-#endif	// SSR_SERVER_H
+#endif	// SSR_UDP_BASE_H

@@ -17,43 +17,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SSR_SERVER_H
-#define SSR_SERVER_H
+#ifndef SSR_SIDE_SERVER_H
+#define SSR_SIDE_SERVER_H
+
 #include <boost/asio.hpp>
-#include <memory>
-#include "../base-server.h"
 #include "ssr-config.h"
+#include "ssr-session-base.h"
 
-// forward declaration to break include loop reference
-class SsrUdpBase;
-
-class SsrServer : public BaseServer
+class SsrSessionServer : public SsrSessionBase
 {
-private:
+	boost::asio::io_service& io_service_;
 	std::shared_ptr<SsrConfig> ssr_config_;
 
-	boost::asio::ip::tcp::endpoint listen_endpoint_;
-	std::unique_ptr<boost::asio::ip::tcp::acceptor> tcp_acceptor_;
-
-	std::shared_ptr<SsrUdpBase> ssr_udp_relay_;
-
+	boost::asio::ip::tcp::socket socket_in_;
+	boost::asio::ip::tcp::socket socket_out_;
 public:
-	enum Mode
-	{
-		SERVER,
-		CLIENT,
-	};
-private:
-	Mode mode;
-public:
-	SsrServer(std::shared_ptr<MainConfig> config, std::shared_ptr<SsrConfig> ssr_config, boost::asio::io_service& io_service);
-	void run() override;
+	SsrSessionServer(std::shared_ptr<SsrConfig> ssr_config, boost::asio::io_service& io_service, std::shared_ptr<SsrServer> parents_server_ref);
 
-private:
-	void async_accept();
+	boost::asio::ip::tcp::socket& accept_socket() override;
+	void start() override;
 };
 
 
-
-
-#endif	// SSR_SERVER_H
+#endif	// SSR_SIDE_SERVER_H
