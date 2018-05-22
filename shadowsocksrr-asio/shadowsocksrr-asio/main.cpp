@@ -35,15 +35,17 @@ std::weak_ptr<Service> service_weak_ref;
 
 
 void handleTermination(int) {
+	Log::log_with_date_time("shadowsocksrr-asio service handled Termination sign.", Log::FATAL);
 	auto ptr = service_weak_ref.lock();
-	if (!ptr)
+	if (ptr)
 		ptr->stop();
 }
 
 void restartService(int) {
+	Log::log_with_date_time("shadowsocksrr-asio service handled Restart sign.", Log::FATAL);
 	restart = true;
 	auto ptr = service_weak_ref.lock();
-	if (!ptr)
+	if (ptr)
 		ptr->stop();
 }
 
