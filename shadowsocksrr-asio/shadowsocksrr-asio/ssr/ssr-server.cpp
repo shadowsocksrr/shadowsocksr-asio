@@ -65,7 +65,7 @@ void SsrServer::run()
 		this->ssr_udp_relay_ = std::dynamic_pointer_cast<SsrUdpBase>(std::make_shared<SsrUdpServer>(ssr_config_, io_service_, self));
 		break;
 	default:
-		assert(false == "server mode wrong");
+		assert(false && "server mode wrong");
 		break;
 	}
 	this->ssr_udp_relay_->start();
@@ -88,7 +88,7 @@ void SsrServer::async_accept()
 		ssr_side_stack_ = std::make_shared<SsrSessionServer>(ssr_config_, io_service_, self);
 		break;
 	default:
-		assert(false == "server mode wrong");
+		assert(false && "server mode wrong");
 		break;
 	}
 
