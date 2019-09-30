@@ -83,4 +83,8 @@ add_executable (shadowsocksrrasio
 
 target_link_libraries(shadowsocksrrasio ${Boost_LIBRARIES})
 
+if (UNIX)
+	target_link_libraries(shadowsocksrrasio pthread)
+endif ()
+
 # TODO: 如有需要，请添加测试并安装目标。
