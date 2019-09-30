@@ -28,7 +28,7 @@ class MainConfig : public std::enable_shared_from_this<MainConfig>
 public:
 	MainConfig();
 	~MainConfig() = default;
-	void load();
+	void load(std::string path);
 	bool analysis(/*TODO*/);
 	bool isInitOk() const;
 

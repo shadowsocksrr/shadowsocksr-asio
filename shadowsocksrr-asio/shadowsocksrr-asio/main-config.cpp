@@ -19,23 +19,28 @@
 
 #include "main-config.h"
 
-MainConfig::MainConfig()
-{
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace pt = boost::property_tree;
+namespace fs = boost::filesystem;
+
+MainConfig::MainConfig() {
 }
 
 // load from file
-void MainConfig::load()
-{
+void MainConfig::load(std::string path) {
+    std::ifstream ifs{};
 }
 
 // analysis a config string which come from file or command
-bool MainConfig::analysis()
-{
-	this->inited = true;
-	return this->inited;
+bool MainConfig::analysis() {
+    this->inited = true;
+    return this->inited;
 }
 
-bool MainConfig::isInitOk() const
-{
-	return this->inited;
+bool MainConfig::isInitOk() const {
+    return this->inited;
 }
