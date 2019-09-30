@@ -92,7 +92,7 @@ void SsrServer::async_accept()
 		break;
 	}
 
-	// bind linsten to io_service
+	// bind listen to io_service
 	tcp_acceptor_->async_accept(
 		ssr_side_stack_->accept_socket(),
 		[this, self, ssr_side_stack_](const boost::system::error_code error)

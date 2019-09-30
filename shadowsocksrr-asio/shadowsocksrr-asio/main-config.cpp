@@ -28,7 +28,7 @@ void MainConfig::load()
 {
 }
 
-// analysis a config string which come from file or commmand
+// analysis a config string which come from file or command
 bool MainConfig::analysis()
 {
 	this->inited = true;
