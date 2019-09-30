@@ -22,11 +22,12 @@
 #include <sstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
+
 using namespace std;
 using namespace boost::posix_time;
 using namespace boost::asio::ip;
 
-Log::Level Log::level(INFO);
+Log::Level Log::level(Level::INFO);
 
 void Log::log(const string &message, Level level) {
     if (level >= Log::level) {

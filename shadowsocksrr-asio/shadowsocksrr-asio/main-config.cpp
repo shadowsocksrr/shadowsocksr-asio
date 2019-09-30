@@ -19,23 +19,61 @@
 
 #include "main-config.h"
 
-MainConfig::MainConfig()
-{
+#include "log.h"
+
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace pt = boost::property_tree;
+namespace fs = boost::filesystem;
+
+MainConfig::MainConfig() {
 }
 
 // load from file
-void MainConfig::load()
-{
+void MainConfig::loadFile(std::string path) {
+    fs::path p{path};
+    if (!fs::is_regular_file(p)) {
+//        Log::log_with_date_time("config file path not a regular_file.", Log::Level::FATAL);
+        SSRR_Throw("config file path not a regular_file. path:" + path);
+    }
+    std::ifstream ifs{path};
+
+    pt::ptree ptree;
+    try {
+        pt::read_json(ifs, ptree);
+    } catch (const pt::json_parser_error &e) {
+        SSRR_Throw("config file read_json error. what: \"" + e.what() + "\"");
+    }
+
+    // TODO read json ptree
+    ;
+
 }
 
-// analysis a config string which come from file or commmand
-bool MainConfig::analysis()
-{
-	this->inited = true;
-	return this->inited;
+void MainConfig::loadJsonString(std::string jsonString) {
+
+    pt::ptree ptree;
+    try {
+        pt::read_json(jsonString, ptree);
+    } catch (const pt::json_parser_error &e) {
+        SSRR_Throw("config json string read_json error. what: \"" + e.what() + "\"");
+    }
+
+    // TODO read json ptree
+    ;
+
 }
 
-bool MainConfig::isInitOk() const
-{
-	return this->inited;
+// analysis a config string which come from file or command
+bool MainConfig::analysis() {
+    this->inited = true;
+    return this->inited;
 }
+
+bool MainConfig::isInitOk() const {
+    return this->inited;
+}
+

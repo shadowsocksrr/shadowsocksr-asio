@@ -21,24 +21,21 @@
 #include "log.h"
 
 Service::Service(std::shared_ptr<MainConfig> config)
-	:config_(config)
-{
-	server_manager_ = std::make_shared<ServerManager>(config_, io_service_);
+        : config_(config) {
+    server_manager_ = std::make_shared<ServerManager>(config_, io_service_);
 }
 
-void Service::run()
-{
-	Log::log_with_date_time("shadowsocksrr-asio service started.", Log::FATAL);
-	// registe all async listen and async task
-	server_manager_->run();
-	// to run
-	io_service_.run();
-	Log::log_with_date_time("shadowsocksrr-asio service stopped", Log::FATAL);
+void Service::run() {
+    Log::log_with_date_time("shadowsocksrr-asio service started.", Log::Level::FATAL);
+    // registe all async listen and async task
+    server_manager_->run();
+    // to run
+    io_service_.run();
+    Log::log_with_date_time("shadowsocksrr-asio service stopped", Log::Level::FATAL);
 }
 
-void Service::stop()
-{
-	io_service_.stop();
+void Service::stop() {
+    io_service_.stop();
 }
 
 
