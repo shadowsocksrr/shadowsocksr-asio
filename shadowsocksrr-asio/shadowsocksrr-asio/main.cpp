@@ -22,11 +22,12 @@
 #include <atomic>
 #include <csignal>
 
+#include <boost/program_options.hpp>
+
 #include "log.h"
 #include "version.h"
 
 #include "service.h"
-
 ;
 
 static std::atomic_bool restart(false);
@@ -35,54 +36,57 @@ std::weak_ptr<Service> service_weak_ref;
 
 
 void handleTermination(int) {
-	Log::log_with_date_time("shadowsocksrr-asio service handled Termination sign.", Log::FATAL);
-	auto ptr = service_weak_ref.lock();
-	if (ptr)
-		ptr->stop();
+    Log::log_with_date_time("shadowsocksrr-asio service handled Termination sign.", Log::FATAL);
+    auto ptr = service_weak_ref.lock();
+    if (ptr)
+        ptr->stop();
 }
 
 void restartService(int) {
-	Log::log_with_date_time("shadowsocksrr-asio service handled Restart sign.", Log::FATAL);
-	restart = true;
-	auto ptr = service_weak_ref.lock();
-	if (ptr)
-		ptr->stop();
+    Log::log_with_date_time("shadowsocksrr-asio service handled Restart sign.", Log::FATAL);
+    restart = true;
+    auto ptr = service_weak_ref.lock();
+    if (ptr)
+        ptr->stop();
 }
 
-int main()
-{
-	Log::log_with_date_time("Welcome to shadowsocksrr-asio " + Version::get_version(), Log::FATAL);
+int main() {
+    namespace po = boost::program_options;
 
-	std::shared_ptr<MainConfig> config_ = std::make_shared<MainConfig>();
-	// TODO load from file or command
-	config_->load();
+    ;
 
-	signal(SIGINT, handleTermination);
-	signal(SIGTERM, handleTermination);
+    Log::log_with_date_time("Welcome to shadowsocksrr-asio " + Version::get_version(), Log::FATAL);
+
+    std::shared_ptr<MainConfig> config_ = std::make_shared<MainConfig>();
+    // TODO load from file or command
+    config_->load();
+
+    signal(SIGINT, handleTermination);
+    signal(SIGTERM, handleTermination);
 #ifndef _WIN32
-	signal(SIGHUP, restartService);
+    signal(SIGHUP, restartService);
 #endif // _WIN32
 
-	try {
-		do {
-			restart = false;
-			{
-				std::shared_ptr<Service> service = std::make_shared<Service>(config_);
-				service_weak_ref = service->weak_from_this();
-				service->run();
-			}
-			if (restart) {
-				Log::log_with_date_time("shadowsocksrr-asio service now restarting. . . ", Log::FATAL);
-			}
-		} while (restart);
-		system("pause");
-	}
-	catch (const std::exception &e) {
-		Log::log_with_date_time(std::string("fatal: ") + e.what(), Log::FATAL);
-		Log::log_with_date_time("exiting. . . ", Log::FATAL);
-		// exit(1);
-		system("pause");
-		return 1;
-	}
-	return 0;
+    try {
+        do {
+            restart = false;
+            {
+                std::shared_ptr<Service> service = std::make_shared<Service>(config_);
+                service_weak_ref = service->weak_from_this();
+                service->run();
+            }
+            if (restart) {
+                Log::log_with_date_time("shadowsocksrr-asio service now restarting. . . ", Log::FATAL);
+            }
+        } while (restart);
+        system("pause");
+    }
+    catch (const std::exception &e) {
+        Log::log_with_date_time(std::string("fatal: ") + e.what(), Log::FATAL);
+        Log::log_with_date_time("exiting. . . ", Log::FATAL);
+        // exit(1);
+        system("pause");
+        return 1;
+    }
+    return 0;
 }
