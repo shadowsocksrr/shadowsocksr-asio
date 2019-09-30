@@ -36,14 +36,14 @@ std::weak_ptr<Service> service_weak_ref;
 
 
 void handleTermination(int) {
-    Log::log_with_date_time("shadowsocksrr-asio service handled Termination sign.", Log::FATAL);
+    Log::log_with_date_time("shadowsocksrr-asio service handled Termination sign.", Log::Level::FATAL);
     auto ptr = service_weak_ref.lock();
     if (ptr)
         ptr->stop();
 }
 
 void restartService(int) {
-    Log::log_with_date_time("shadowsocksrr-asio service handled Restart sign.", Log::FATAL);
+    Log::log_with_date_time("shadowsocksrr-asio service handled Restart sign.", Log::Level::FATAL);
     restart = true;
     auto ptr = service_weak_ref.lock();
     if (ptr)
@@ -51,15 +51,18 @@ void restartService(int) {
 }
 
 int main(int argc, const char *const argv[]) {
-    Log::log_with_date_time("Welcome to shadowsocksrr-asio " + Version::get_version(), Log::FATAL);
+    Log::log_with_date_time("Welcome to shadowsocksrr-asio " + Version::get_version(), Log::Level::FATAL);
 
+    std::string configFilePath{};
+    std::string configJsonString{};
     {
         namespace po = boost::program_options;
 
         po::options_description desc{"hadowsocksrr-asio"};
         desc.add_options()
                 ("help", "produce help message")
-                ("config", po::value<std::string>(), "config file path")
+                ("configFile", po::value<std::string>(), "config file path")
+                ("configJson", po::value<std::string>(), "config Json string")
             /* TODO other */;
 
         po::variables_map vm;
@@ -72,13 +75,15 @@ int main(int argc, const char *const argv[]) {
             return 1;
         }
 
-        // TODO other
-
+        if (vm.count("configFile")) {
+            configFilePath = vm["configFile"].as<std::string>();
+        }
+        if (vm.count("configJson")) {
+            configJsonString = vm["configJson"].as<std::string>();
+        }
     }
 
     std::shared_ptr<MainConfig> config_ = std::make_shared<MainConfig>();
-    // TODO load from file or command
-    config_->load("");
 
     signal(SIGINT, handleTermination);
     signal(SIGTERM, handleTermination);
@@ -87,6 +92,13 @@ int main(int argc, const char *const argv[]) {
 #endif // _WIN32
 
     try {
+        // load from file or command
+        if (configFilePath.empty()) {
+            config_->loadJsonString(configJsonString);
+        } else {
+            config_->loadFile(configFilePath);
+        }
+
         do {
             restart = false;
             {
@@ -95,14 +107,14 @@ int main(int argc, const char *const argv[]) {
                 service->run();
             }
             if (restart) {
-                Log::log_with_date_time("shadowsocksrr-asio service now restarting. . . ", Log::FATAL);
+                Log::log_with_date_time("shadowsocksrr-asio service now restarting. . . ", Log::Level::FATAL);
             }
         } while (restart);
         system("pause");
     }
     catch (const std::exception &e) {
-        Log::log_with_date_time(std::string("fatal: ") + e.what(), Log::FATAL);
-        Log::log_with_date_time("exiting. . . ", Log::FATAL);
+        Log::log_with_date_time(std::string("fatal: ") + e.what(), Log::Level::FATAL);
+        Log::log_with_date_time("exiting. . . ", Log::Level::FATAL);
         // exit(1);
         system("pause");
         return 1;
