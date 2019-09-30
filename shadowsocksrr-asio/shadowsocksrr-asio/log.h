@@ -24,6 +24,7 @@
 #include <boost/asio.hpp>
 #include <stdexcept>
 #include <utility>
+#include <boost/lexical_cast.hpp>
 
 #ifdef ERROR // windows.h
 #undef ERROR
@@ -59,12 +60,18 @@ class AssertError : public std::exception {
 
 public:
     explicit
-//    AssertError(std::string reason, std::string files, std::string lines)
-//            : reason(std::move(reason)), files(std::move(files)), lines(std::move(lines)) {
-    AssertError(const std::string &reason, const std::string &files, const std::string &lines)
+    AssertError(const std::string &reason, const std::string &files, int lines)
             : _reason(std::string("AssertError : \"") + reason +
                       std::string("\" in file : \"") + files +
-                      std::string("\" at line : ") + lines) {
+                      std::string("\" at line : ") + boost::lexical_cast<std::string>(lines)) {
+        Log::log_with_date_time(_reason, Log::Level::FATAL);
+    }
+
+    explicit
+    AssertError(const char *const reason, const char *const files, int lines)
+            : _reason(std::string("AssertError : \"") + reason +
+                      std::string("\" in file : \"") + files +
+                      std::string("\" at line : ") + boost::lexical_cast<std::string>(lines)) {
         Log::log_with_date_time(_reason, Log::Level::FATAL);
     }
 
@@ -86,6 +93,8 @@ public:
 
 };
 
-#define SSRR_Assert(expr) do { if(!!(expr)) ; else AssertError( #expr, __FILE__, __LINE__ ); } while(0)
+#define SSRR_Assert(expr) do { if(!!(expr)) ; else throw AssertError( #expr, __FILE__, __LINE__ ); } while(0)
+
+#define SSRR_Throw(expr) do { throw AssertError( #expr, __FILE__, __LINE__ ); } while(0)
 
 #endif // _LOG_H_
