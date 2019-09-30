@@ -26,7 +26,7 @@ if(MSVC)
 	add_definitions(-D_WIN32_WINNT=0x0A00)	 # Windows 10
 endif()
 
-find_package(Boost 1.54.0 REQUIRED COMPONENTS system)
+find_package(Boost 1.54.0 REQUIRED COMPONENTS system program_options)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
