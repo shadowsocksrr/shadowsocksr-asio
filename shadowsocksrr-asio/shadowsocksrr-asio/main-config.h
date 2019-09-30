@@ -29,7 +29,9 @@ public:
 
     ~MainConfig() = default;
 
-    void load(std::string path);
+    void loadFile(std::string path);
+
+    void loadJsonString(std::string jsonString);
 
     bool analysis(/*TODO*/);
 
