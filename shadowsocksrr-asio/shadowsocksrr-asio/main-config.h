@@ -22,30 +22,33 @@
 
 #include <memory>
 
-class MainConfig : public std::enable_shared_from_this<MainConfig>
-{
-	bool inited = false;
+class MainConfig : public std::enable_shared_from_this<MainConfig> {
+    bool inited = false;
 public:
-	MainConfig();
-	~MainConfig() = default;
-	void load(std::string path);
-	bool analysis(/*TODO*/);
-	bool isInitOk() const;
+    MainConfig();
 
-	// help function to create sub config from a sub config tree or sub config string
-	// TODO 
-	template<typename TConfig> std::shared_ptr<TConfig> getConfig(/*TODO*/);
+    ~MainConfig() = default;
 
-	// TODO config tree
+    void load(std::string path);
+
+    bool analysis(/*TODO*/);
+
+    bool isInitOk() const;
+
+    // help function to create sub config from a sub config tree or sub config string
+    // TODO
+    template<typename TConfig>
+    std::shared_ptr<TConfig> getConfig(/*TODO*/);
+
+    // TODO config tree
 };
 
 template<typename TConfig>
-inline std::shared_ptr<TConfig> MainConfig::getConfig(/*TODO*/)
-{
-	auto c = std::make_shared<TConfig>();
-	c->analysis(/*TODO*/);
-	return c;
+inline std::shared_ptr<TConfig> MainConfig::getConfig(/*TODO*/) {
+    auto c = std::make_shared<TConfig>();
+    c->analysis(/*TODO*/);
+    return c;
 }
 
 
-#endif	// BASE_CONFIG_H
+#endif    // BASE_CONFIG_H
