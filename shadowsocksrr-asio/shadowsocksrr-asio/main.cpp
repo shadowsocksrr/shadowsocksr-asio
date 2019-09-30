@@ -50,16 +50,35 @@ void restartService(int) {
         ptr->stop();
 }
 
-int main() {
-    namespace po = boost::program_options;
-
-    ;
-
+int main(int argc, const char *const argv[]) {
     Log::log_with_date_time("Welcome to shadowsocksrr-asio " + Version::get_version(), Log::FATAL);
+
+    {
+        namespace po = boost::program_options;
+
+        po::options_description desc{"hadowsocksrr-asio"};
+        desc.add_options()
+                ("help", "produce help message")
+                ("config", po::value<std::string>(), "config file path")
+            /* TODO other */;
+
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+
+
+        if (vm.count("help")) {
+            std::cout << desc << "\n";
+            return 1;
+        }
+
+        // TODO other
+
+    }
 
     std::shared_ptr<MainConfig> config_ = std::make_shared<MainConfig>();
     // TODO load from file or command
-    config_->load();
+    config_->load("");
 
     signal(SIGINT, handleTermination);
     signal(SIGTERM, handleTermination);
